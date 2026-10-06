@@ -3,6 +3,17 @@ import fs from 'fs';
 
 const program = new Command();
 
+
+
+
+
+/*--------------------------------------------------------------File------------------------------------------------------*/
+
+
+
+
+
+
 program
     .name('transport-json')
     .description('json файл з даними руху громадського транспорту у Львові')
@@ -32,6 +43,21 @@ function readData(filePath)
         process.exit(1);
     }
 }
+
+
+
+
+
+
+
+
+/*--------------------------------------------------------------List------------------------------------------------------*/
+
+
+
+
+
+
 program
     .command('list')
     .description('Стислий список маршрутів з можливістю обмеження кількості виведених данних')
@@ -62,6 +88,51 @@ program
     }
 
 )
+
+
+
+
+
+
+
+
+/*--------------------------------------------------------------One Route------------------------------------------------------*/
+
+
+
+
+program
+    .command('show <id>')
+    .description('Показ усіх даних про маршрут за його ID')
+    .action((id) =>
+    {
+        const globalOpts = program.opts();
+        const data = readData(globalOpts.file);
+
+        const routeId = Number(id);
+        if(isNaN(routeId))
+        {
+            console.log('ID повинно бути числом');
+            process.exit(1);
+        }
+
+        const route = data.routes.find(r => r.id === routeId);
+        
+        if(!route)
+        {
+            console.log(`Маршруту з ID ${routeId} не знайдено.`);
+            process.exit(1);
+        }
+        console.log(route);
+    }
+
+)
+
+
+
+
+
+
 
 program.parse(process.argv);
 
