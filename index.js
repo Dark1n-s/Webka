@@ -78,9 +78,9 @@ program
             routes = routes.slice(0, limit);
         }
         console.log('Список маршрутів:');
-        routes.forEach(route => 
+        routes.forEach(i => 
         {
-            console.log(`- [${route.type}] Маршрут №${route.id}: ${route.route} `)    
+            console.log(`- [${i.type}] Маршрут №${i.id}: ${i.route} `)    
         });
     }
 
@@ -204,15 +204,15 @@ program
             process.exit(1);
         }
         console.log(`Зупинки маршруту №${routeId}:`)
-        route.stops.forEach(stop =>
+        route.stops.forEach(i =>
         {
             if (options.coords)
             {
-                console.log(`- ${stop.name} [Lat: ${stop.coordinates.lat}, Lng: ${stop.coordinates.lng}]`);
+                console.log(`- ${i.name} [Lat: ${i.coordinates.lat}, Lng: ${i.coordinates.lng}]`);
             }
             else
             {
-                console.log(`- ${stop.name}`);
+                console.log(`- ${i.name}`);
             }
         }
 
@@ -273,6 +273,36 @@ program
     }
 )
 
+
+
+
+
+/*--------------------------------------------------------------Low floor------------------------------------------------------*/
+
+program
+    .command('low-floor')
+    .description('Показати всі маршрути з низькопідлоговим транспортом')
+    .action(()=>
+    {
+        const globalOpts = program.opts();
+        const data = readData(globalOpts.file);
+
+        const lowFloorRoutes = data.routes.filter(r => r.is_low_floor === true);
+
+        if(lowFloorRoutes.length === 0)
+        {
+            console.log('Низькопідлогового транспорту не знайдено. ');
+            process.exit(1);
+        }
+        
+        console.log('Маршрути з низькопідлоговим транспортом:')
+        lowFloorRoutes.forEach(i =>
+        {
+            console.log(`- [${i.type}] Маршрут №${i.id}: ${i.route}`);
+        }
+        )
+    }
+    )
 
 
 
