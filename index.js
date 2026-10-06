@@ -174,7 +174,7 @@ program
 )
 
 
-/*--------------------------------------------------------------One Field------------------------------------------------------*/
+/*--------------------------------------------------------------Stops With Coords------------------------------------------------------*/
 
 
 program
@@ -220,6 +220,61 @@ program
 
     }
 )
+
+
+
+
+/*--------------------------------------------------------------Intervals with daytypes------------------------------------------------------*/
+
+
+
+
+
+program
+    .command('interval <id> [day_type]')
+    .description('Показати інтервал руху маршруту (day_type: weekdays або weekends)')
+    .action((id, day_type) =>
+    {
+        const globalOpts = program.opts();
+        const data = readData(globalOpts.file);
+        const routeId = Number(id);
+
+        if(isNaN(routeId))
+        {
+            console.log('ID маршруту повинно бути числом')
+        }
+        const route = data.routes.find(r => r.id==routeId);
+        if(!route)
+        {
+            console.log(`Маршруту з ID ${routeId} не знайдено`);
+            process.exit(1);
+        }
+        if(!route.interval_minutes)
+        {
+            console.log(`Для маршруту №${routeId} немає даних про інтервали.`);
+            return;
+        }
+
+        if(day_type)
+        {
+            if(day_type !== 'weekdays' && day_type !== 'weekends' )
+            {
+                console.log('Помилка: Тип дня має бути "weekdays" або "weekends".');
+                process.exit(1);
+            }
+            console.log(`Інтервал (${day_type}): ${route.interval_minutes[day_type]} хв`)
+        }
+        else
+        {
+            console.log(`Інтервал у будні: ${route.interval_minutes.weekdays} хв.`);
+            console.log(`Інтервал у вихідні: ${route.interval_minutes.weekends} хв.`);
+        }
+
+    }
+)
+
+
+
 
 
 program.parse(process.argv);
