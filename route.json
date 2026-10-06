@@ -1,0 +1,61 @@
+{
+  "city": "Львів",
+  "routes": [
+    {
+      "id": 8,
+      "type": "tram",
+      "route": "Площа Соборна - Вулиця Вернадського",
+      "is_low_floor": false,
+      "interval_minutes": {
+        "weekdays": 10,
+        "weekends": 20
+      },
+      "stops": [
+        {
+          "stop_id": "t8_01",
+          "name": "Площа Соборна",
+          "coordinates": {
+            "lat": 49.839820,
+            "lng": 24.032210
+          }
+        },
+        {
+          "stop_id": "t8_02",
+          "name": "Вулиця Шухевича",
+          "coordinates": {
+            "lat": 49.837550,
+            "lng": 24.034530
+          }
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "type": "trolleybus",
+      "route": "Університет - Автовокзал",
+      "is_low_floor": true,
+      "interval_minutes": {
+        "weekdays": 12,
+        "weekends": 18
+      },
+      "stops": [
+        {
+          "stop_id": "tr22_01",
+          "name": "Університет",
+          "coordinates": {
+            "lat": 49.840420,
+            "lng": 24.022350
+          }
+        },
+        {
+          "stop_id": "tr22_02",
+          "name": "Собор Святого Юра",
+          "coordinates": {
+            "lat": 49.838420,
+            "lng": 24.015250
+          }
+        }
+      ]
+    }
+  ]
+}
