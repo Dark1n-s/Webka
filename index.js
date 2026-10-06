@@ -3,22 +3,6 @@ import fs from 'fs';
 
 const program = new Command();
 
-
-
-
-
-/*--------------------------------------------------------------File------------------------------------------------------*/
-
-
-
-
-
-
-program
-    .name('transport-json')
-    .description('json файл з даними руху громадського транспорту у Львові')
-    .version('1.0.0')
-    .option('-f, --file <path>', 'шлях до json-файлу з даними', 'route.json');
 function readData(filePath)
 {
     try
@@ -45,6 +29,19 @@ function readData(filePath)
 }
 
 
+
+/*--------------------------------------------------------------File------------------------------------------------------*/
+
+
+
+
+
+
+program
+    .name('transport-json')
+    .description('json файл з даними руху громадського транспорту у Львові')
+    .version('1.0.0')
+    .option('-f, --file <path>', 'шлях до json-файлу з даними', 'route.json');
 
 
 
@@ -129,6 +126,52 @@ program
 )
 
 
+
+/*--------------------------------------------------------------One Field------------------------------------------------------*/
+
+
+program
+    .command('field <id> <path>')
+    .description('Показати значення окремого поля маршруту')
+    .action((id, path) =>
+    {
+        const globalOpts = program.opts();
+        const data = readData(globalOpts.file);
+        const routeId = Number(id);
+        const route = data.routes.find(r => r.id==routeId);
+        if(!route)
+        {
+            console.log(`Маршруту з ID ${routeId} не знайдено.`)
+            process.exit(1);
+        }
+
+        const keys = path.split('.');
+        let result = route;
+
+        for (const i of keys)
+        {
+            if (result === undefined || result === null)
+            {
+                break;
+            }
+            result = result[i];
+        }
+
+
+        if (result === undefined)
+        {
+            console.log(`Поле ${path} відсутнє.`)
+        }
+        else if (result === null)
+        {
+            console.log(`Поле ${path} існує, але має значення null`)
+        }
+        else
+        {
+            console.log(result);
+        }
+    } 
+)
 
 
 
