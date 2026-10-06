@@ -174,7 +174,52 @@ program
 )
 
 
+/*--------------------------------------------------------------One Field------------------------------------------------------*/
 
+
+program
+    .command('stops <id>')
+    .description('Показати зупинки траспорту за його ID')
+    .option('-c, --coords', 'Показати координати зупинки')
+    .action((id, options) =>
+    {
+        const globalOpts = program.opts();
+        const data = readData(globalOpts.file);
+        const routeId = Number(id);
+
+        if(isNaN(routeId))
+        {
+            console.log('ID повинно бути числом')
+            process.exit(1);
+        }
+        const route = data.routes.find(r => r.id==routeId);
+        if(!route)
+        {
+            console.log(`Маршруту з ID ${routeId} не знайдено`);
+            process.exit(1);
+        }
+        if(!route.stops || route.stops.length === 0)
+        {
+            console.log(`Маршрут з ID ${routeId} ще немає зупинок`)
+            process.exit(1);
+        }
+        console.log(`Зупинки маршруту №${routeId}:`)
+        route.stops.forEach(stop =>
+        {
+            if (options.coords)
+            {
+                console.log(`- ${stop.name} [Lat: ${stop.coordinates.lat}, Lng: ${stop.coordinates.lng}]`);
+            }
+            else
+            {
+                console.log(`- ${stop.name}`);
+            }
+        }
+
+        )
+
+    }
+)
 
 
 program.parse(process.argv);
