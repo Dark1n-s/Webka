@@ -72,8 +72,39 @@ function startServer()
                 res.end('Пошкоджений файл даних');
                 return;
             }
-            res.end('Sucs')
+            
+
+            const filtered = json.filter(item =>
+            {
+                if (rated && item.rated !== "TRUE")
+                {
+                    return false;
+                }
+                if (minTurns !== null && Number(item.turns)<= minTurns)
+                {
+                    return false;
+                }
+                return true;
+            }
+            ).map(item =>
+            {
+                return{
+                    id: item.id || null,
+                    winner: item.winner || null,
+                    turns: item.turns ? Number(item.turns) : null,
+                    opening: item.opening_name || null
+                };
+            }
+            );
+
+            const responseText = JSON.stringify(filtered, null, 2);
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(responseText);
+
+
         });
+
 
     });
     server.listen(options.port, options.host);
