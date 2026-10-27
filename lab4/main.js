@@ -52,8 +52,28 @@ function startServer()
                 return;
             }
         }
+        fs.readFile(options.input, 'utf-8', (readErr, data) =>
+        {
+            if (readErr)
+            {
+                res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8'});
+                res.end('Помилка читання файлу');
+                return;
+            }
 
-        res.end('Params valid')
+            let json;
+            try
+            {
+                json = JSON.parse(data);
+            }
+            catch(parseErr)
+            {
+                res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+                res.end('Пошкоджений файл даних');
+                return;
+            }
+            res.end('Sucs')
+        });
 
     });
     server.listen(options.port, options.host);
