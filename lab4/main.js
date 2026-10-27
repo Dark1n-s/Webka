@@ -25,4 +25,20 @@ fs.access(options.input, fs.constants.F_OK, (err) =>
 );
 
 function startServer()
-{}
+{
+    const server = http.createServer((req,res)=>
+    {
+        const baseURL = `http://${req.headers.host}`;
+        const reqUrl = new URL(req.url, baseURL);
+
+        if (reqUrl.pathname !== '/')
+        {
+            res.writeHead(404, {'content-type':'text/plain; charset=utf-8'});
+            res.end('Шлях не знайдено');
+            return;
+        }
+
+        res.end('Сервер працює')
+    });
+    server.listen(options.port, options.host);
+}
