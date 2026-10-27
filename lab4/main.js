@@ -1,6 +1,6 @@
 import {program} from 'commander';
 import http from 'http';
-import fs from 'fs';
+import fs, { write } from 'fs';
 import { start } from 'repl';
 
 program
@@ -99,8 +99,26 @@ function startServer()
 
             const responseText = JSON.stringify(filtered, null, 2);
 
-            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(responseText);
+            if(options.output)
+            {
+                fs.writeFile(options.output, responseText, 'utf8', (writeErr) =>
+                {
+                    if (writeErr)
+                    {
+                        res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+                        res.end('Помилка запису у файл');
+                        return;
+                    }
+                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                    res.end(responseText);
+                });
+            }
+            else
+            {
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(responseText);
+            }
+        
 
 
         });
