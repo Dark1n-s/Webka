@@ -38,7 +38,23 @@ function startServer()
             return;
         }
 
-        res.end('Сервер працює')
+        const rated = reqUrl.searchParams.get('rated') === 'true';
+        const minTurnsStr = reqUrl.searchParams.get('min_turns');
+        let minTurns = 0;
+
+        if(minTurnsStr !== null)
+        {
+            minTurns = Number(minTurnsStr);
+            if(isNaN(minTurns))
+            {
+                res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+                res.end('Параметр min_turns має бути числом');
+                return;
+            }
+        }
+
+        res.end('Params valid')
+
     });
     server.listen(options.port, options.host);
 }
