@@ -22,59 +22,90 @@ async function startServer()
     {
         const code = req.url.slice(1);
         const filePath = path.join(options.cache, `${code}.jpg`)
-
-        if(req.method === 'GET')
+        try
         {
-            try
+            if(req.method === 'GET')
             {
-                const image = await fs.readFile(filePath)
-                res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'cache' });
-                res.end(image);
-            }
-            catch(err)
-            {
-                if(err.code === 'ENOENT')
+                try
                 {
-                    try
+                    const image = await fs.readFile(filePath)
+                    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'cache' });
+                    res.end(image);
+                }
+                catch(err)
+                {
+                    if(err.code === 'ENOENT')
                     {
-                        const response = await superagent.get(`https://http.cat/${code}`)
-                        await fs.writeFile(filePath, response.body);
-                        res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'http.cat' });
-                        res.end(response.body);
-                    }
-                    catch(supererr)
-                    {
-                        if (supererr.status === 404)
+                        try
                         {
-                            res.writeHead(404, {'Content-Type': 'text/plain' });
-                            res.end('Not Found on http.cat');
+                            const response = await superagent.get(`https://http.cat/${code}`)
+                            await fs.writeFile(filePath, response.body);
+                            res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'http.cat' });
+                            res.end(response.body);
                         }
-                    }
+                        catch(supererr)
+                        {
+                            if (supererr.status === 404)
+                            {
+                                res.writeHead(404, {'Content-Type': 'text/plain' });
+                                res.end('Not Found on http.cat');
+                            }
+                        }
 
+                    }
                 }
             }
-        }
-        else if(req.method === 'PUT')
-        {
-            const chunks = [];
-
-            for await (const chunk of req)
+            else if(req.method === 'PUT')
             {
-                chunks.push(chunk);
+                const chunks = [];
+
+                for await (const chunk of req)
+                {
+                    chunks.push(chunk);
+                }
+
+                const body = Buffer.concat(chunks);
+
+                await fs.writeFile(filePath, body);
+
+                res.writeHead(201, { 'Content-Type': 'text/plain' });
+                res.end('Created');
             }
-
-            const body = Buffer.concat(chunks);
-
-            await fs.writeFile(filePath, body);
-
-            res.writeHead(201, { 'Content-Type': 'text/plain' });
-            res.end('Created');
+            else if(req.method === 'DELETE')
+            {
+                try
+                {
+                    await fs.unlink(filePath);
+                    res.writeHead(200, { 'Content-Type': 'text/plain' });
+                    res.end('OK');
+                }
+                catch(err)
+                {
+                    if(err.code === 'ENOENT')
+                    {
+                        res.writeHead(404, { 'Content-Type': 'text/plain' });
+                        res.end('Not Found');
+                    }
+                    else
+                    {
+                        throw err;
+                    }
+                }
+            }
+            else
+            {
+                res.writeHead(405, { 'Content-Type': 'text/plain' });
+                res.end('Method Not Allowed');
+            }
         }
-        else
+        catch(globalErr)
         {
-            res.writeHead(405, { 'Content-Type': 'text/plain' });
-            res.end('Method Not Allowed');
+            console.log(globalErr);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal Server Error');
         }
+        
+        
     });
 
 
