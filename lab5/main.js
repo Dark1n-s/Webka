@@ -54,6 +54,22 @@ async function startServer()
                 }
             }
         }
+        else if(req.method === 'PUT')
+        {
+            const chunks = [];
+
+            for await (const chunk of req)
+            {
+                chunks.push(chunk);
+            }
+
+            const body = Buffer.concat(chunks);
+
+            await fs.writeFile(filePath, body);
+
+            res.writeHead(201, { 'Content-Type': 'text/plain' });
+            res.end('Created');
+        }
         else
         {
             res.writeHead(405, { 'Content-Type': 'text/plain' });
