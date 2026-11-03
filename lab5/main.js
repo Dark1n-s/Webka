@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import fs from 'fs/promises';
-import { start } from "repl";
+import http from 'http';
 const program = new Command();
 
 program
@@ -14,7 +14,18 @@ const options = program.opts();
 async function startServer()
 {
     await fs.mkdir(options.cache, {recursive: true})
-    console.log("ss")
+    
+    const server = http.createServer(async (req,res) =>
+    {
+        res.writeHead(405, {'Content-Type': 'text/plain'});
+        res.end('Method not Allowed');
+    });
+    server.listen(options.port, options.host, ()=>
+    {
+        console.log('ss')
+    });
 }
+
+
 
 startServer();

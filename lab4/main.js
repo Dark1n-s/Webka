@@ -1,7 +1,6 @@
 import {program} from 'commander';
 import http from 'http';
-import fs, { write } from 'fs';
-import { start } from 'repl';
+import fs from 'fs';
 
 program
     .helpOption('-h,--help')
@@ -17,7 +16,7 @@ fs.access(options.input, fs.constants.F_OK, (err) =>
 {
     if (err)
     {
-        console.log('Cannot find input file')
+        console.log('Файл не знайдено')
         process.exit(444);
     }
     startServer();
