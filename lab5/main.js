@@ -2,6 +2,8 @@ import { Command } from "commander";
 import fs from 'fs/promises';
 import http from 'http';
 import path from 'path';
+import superagent from 'superagent';
+
 const program = new Command();
 
 program
@@ -31,8 +33,14 @@ async function startServer()
             }
             catch(err)
             {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                res.end('Not found in cache');
+                if(err.code === 'ENOENT')
+                {
+                    const response = await superagent.get(`https://http.cat/${code}`)
+                    const imageBuffer = response.body;
+                    await fs.writeFile(filePath, imageBuffer);
+                    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'http.cat' });
+                    res.end(imageBuffer);
+                }
             }
         }
         else
