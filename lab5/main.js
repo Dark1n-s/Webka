@@ -1,5 +1,6 @@
 import { Command } from "commander";
-
+import fs from 'fs/promises';
+import { start } from "repl";
 const program = new Command();
 
 program
@@ -9,4 +10,11 @@ program
 
 program.parse(process.argv);
 const options = program.opts();
-console.log(options);
+
+async function startServer()
+{
+    await fs.mkdir(options.cache, {recursive: true})
+    console.log("ss")
+}
+
+startServer();
