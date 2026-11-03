@@ -1,0 +1,20 @@
+# 1. GET: Завантаження картинки 
+curl -v http://localhost:3000/200 -o 200.jpg
+
+# 2. GET: Повторне завантаження тієї ж картинки 
+curl -v http://localhost:3000/200 -o 200_cache.jpg
+
+# 3. GET: Запит неіснуючого коду 
+curl -v http://localhost:3000/999
+
+# 4. PUT: Завантаження власної картинки в кеш
+curl -v -X PUT --data-binary "@200.jpg" http://localhost:3000/201
+
+# 5. DELETE: Видалення картинки з кешу
+curl -v -X DELETE http://localhost:3000/200
+
+# 6. DELETE: Спроба видалити неіснуючу картинку 
+curl -v -X DELETE http://localhost:3000/999
+
+# 7. POST: Недозволений метод 
+curl -v -X POST http://localhost:3000/200
