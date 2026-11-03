@@ -35,11 +35,22 @@ async function startServer()
             {
                 if(err.code === 'ENOENT')
                 {
-                    const response = await superagent.get(`https://http.cat/${code}`)
-                    const imageBuffer = response.body;
-                    await fs.writeFile(filePath, imageBuffer);
-                    res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'http.cat' });
-                    res.end(imageBuffer);
+                    try
+                    {
+                        const response = await superagent.get(`https://http.cat/${code}`)
+                        await fs.writeFile(filePath, response.body);
+                        res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Source': 'http.cat' });
+                        res.end(response.body);
+                    }
+                    catch(supererr)
+                    {
+                        if (supererr.status === 404)
+                        {
+                            res.writeHead(404, {'Content-Type': 'text/plain' });
+                            res.end('Not Found on http.cat');
+                        }
+                    }
+
                 }
             }
         }
